@@ -1,0 +1,10 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: calendar-eventsource
+spec:
+  calendar:
+    first-event:
+      schedule: "*/1 * * * *" #svaki minut
+    second-event:
+      schedule: "*/2 * * * *" #svaka dva minuta 

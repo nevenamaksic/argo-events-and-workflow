@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: calendar-2
+spec:
+  template:
+    serviceAccountName: argo-events-sa
+  dependencies:
+    - name: calendar-dep 
+      eventSourceName: calendar-eventsource
+      eventName: second-event 
+  triggers:
+    - template:
+        name: calendar-workflow-trigger
+        k8s:
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: calendar-1-workflow-
+              spec:
+                entrypoint: whalesay
+                arguments:
+                  parameters:
+                  - name: message
+                    value: hello world
+                templates:
+                - name: whalesay
+                  inputs:
+                    parameters:
+                    - name: message
+                  container:
+                    image: docker/whalesay:latest
+                    command: [cowsay]
+                    args: ["{{inputs.parameters.message}}"]
